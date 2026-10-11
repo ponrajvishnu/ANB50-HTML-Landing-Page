@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marquee – Book cinema tickets, pick your own seat</title>
+<meta name="description" content="Book cinema tickets in under a minute. Choose your exact seat, see showtimes at nearby theatres, and skip the queue.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#1d1030; --plum-2:#2a1845; --velvet:#3b2266; --lav:#ece6f8; --mute:#b4a6d1;
+  --gold:#ffc83d; --coral:#ff5f73; --line:rgba(236,230,248,.14);
+  --font:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --wrap:min(1160px,100% - 2.5rem);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--plum);color:var(--lav);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+.wrap{width:var(--wrap);margin-inline:auto}
+h1,h2,h3{line-height:1.05;letter-spacing:-.02em;font-weight:800}
+h1{font-size:clamp(2.6rem,6.5vw,5rem)}
+h2{font-size:clamp(1.9rem,4vw,3rem);max-width:18ch}
+h3{font-size:1.25rem;letter-spacing:-.01em}
+p{color:var(--mute)}
+.btn{display:inline-block;padding:.9rem 1.6rem;border-radius:999px;font-weight:600;border:2px solid var(--gold);transition:transform .15s,background .15s}
+.btn-gold{background:var(--gold);color:var(--plum)}
+.btn-gold:hover{transform:translateY(-2px);background:#ffd766}
+.btn-ghost{color:var(--gold)}
+.btn-ghost:hover{background:rgba(255,200,61,.12)}
+
+/* header */
+header{position:sticky;top:0;z-index:10;background:rgba(29,16,48,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font-size:1.45rem;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:.5rem}
+.logo::before{content:"";width:22px;height:22px;background:var(--gold);border-radius:6px 6px 12px 12px}
+.nav ul{display:flex;gap:2rem;list-style:none;padding:0}
+.nav ul a{color:var(--mute);font-weight:600}
+.nav ul a:hover{color:var(--lav)}
+.nav .btn{padding:.55rem 1.2rem}
+
+/* hero */
+.hero{padding:clamp(3rem,7vw,6rem) 0 clamp(3rem,6vw,5rem);background:radial-gradient(900px 420px at 75% 0,rgba(91,52,158,.55),transparent 70%)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center}
+.hero p.lead{font-size:1.2rem;max-width:40ch;margin:1.4rem 0 2rem}
+.cta{display:flex;flex-wrap:wrap;gap:.9rem}
+.facts{display:flex;flex-wrap:wrap;gap:1.5rem 2.5rem;margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid var(--line)}
+.facts strong{display:block;font-size:1.5rem;color:var(--lav)}
+.facts span{font-size:.9rem;color:var(--mute)}
+
+/* seat map: the one interactive moment */
+.hall{background:var(--plum-2);border:1px solid var(--line);border-radius:28px;padding:1.6rem 1.4rem 1.4rem;counter-reset:sel;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+.screen{height:46px;margin:0 8% 1.6rem;border-radius:50% 50% 0 0/100% 100% 0 0;background:linear-gradient(to bottom,rgba(255,200,61,.55),transparent);border-top:3px solid var(--gold);text-align:center;font-size:.8rem;color:var(--gold);padding-top:.5rem;animation:glow 3.2s ease-in-out 1}
+@keyframes glow{0%{opacity:.2}60%{opacity:1}100%{opacity:1}}
+.row{display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:6px}
+.row b{width:18px;font-size:.78rem;color:var(--mute);font-weight:600}
+.aisle{width:16px}
+.row label{position:relative;display:block;width:clamp(26px,4.6vw,34px);aspect-ratio:1;cursor:pointer}
+.row input{position:absolute;inset:0;opacity:0;margin:0;cursor:inherit}
+.row i{position:absolute;inset:0;border-radius:9px 9px 5px 5px;background:var(--velvet);border-bottom:4px solid #281647;transition:background .15s,transform .15s}
+.row label:hover i{background:#53318f}
+.row input:checked:not(:disabled)+i{background:var(--gold);border-color:#d9a21c;transform:translateY(-3px);counter-increment:sel}
+.row input:disabled+i{background:var(--coral);opacity:.45;border-color:transparent}
+.row input:focus-visible+i{outline:3px solid var(--lav);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem 1.2rem;margin-top:1.3rem;padding-top:1rem;border-top:1px solid var(--line);font-size:.85rem;color:var(--mute)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:.4rem;vertical-align:-1px;background:var(--velvet)}
+.legend .t::before{background:var(--gold)}
+.legend .b::before{background:var(--coral);opacity:.5}
+.picked::after{content:counter(sel) " selected";color:var(--lav);font-weight:600}
+
+/* sections */
+section{padding:clamp(3.5rem,8vw,6.5rem) 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:1.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.head p{max-width:36ch}
+
+/* now showing */
+.films{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.film{display:flex;flex-direction:column}
+.poster{aspect-ratio:2/3;border-radius:18px;padding:1.1rem;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;color:#fff}
+.poster::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent 55%)}
+.poster strong{position:relative;z-index:1;font-size:1.55rem;line-height:1;letter-spacing:-.03em;font-weight:800}
+.poster small{position:relative;z-index:1;margin-top:.4rem;opacity:.85}
+.p1{background:radial-gradient(circle at 70% 25%,#ffb347,transparent 40%),linear-gradient(160deg,#c2410c,#3b0d0d)}
+.p2{background:radial-gradient(circle at 30% 30%,#7dd3fc,transparent 45%),linear-gradient(160deg,#1e3a8a,#0a1030)}
+.p3{background:radial-gradient(circle at 60% 20%,#f9a8d4,transparent 45%),linear-gradient(160deg,#9d174d,#2a0a22)}
+.p4{background:radial-gradient(circle at 40% 25%,#86efac,transparent 45%),linear-gradient(160deg,#166534,#06190e)}
+.film h3{margin:.9rem 0 .15rem}
+.film .meta{font-size:.9rem}
+.times{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.8rem}
+.times a{padding:.3rem .75rem;border:1px solid var(--line);border-radius:8px;font-size:.88rem;font-weight:600}
+.times a:hover{border-color:var(--gold);color:var(--gold)}
+
+/* steps: a real sequence */
+.steps-band{background:var(--plum-2);border-block:1px solid var(--line)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;list-style:none;padding:0;counter-reset:s}
+.steps li{counter-increment:s;border-left:3px solid var(--gold);padding-left:1.3rem}
+.steps li::before{content:"Step " counter(s);display:block;font-size:.9rem;color:var(--gold);font-weight:600;margin-bottom:.4rem}
+.steps h3{margin-bottom:.4rem}
+
+/* formats */
+.formats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.fmt{padding:1.8rem;border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg,var(--plum-2),var(--plum))}
+.fmt.hl{border-color:var(--gold)}
+.price{font-size:2.3rem;font-weight:800;color:var(--lav);margin:.7rem 0}
+.price small{font-size:.95rem;font-weight:400;color:var(--mute)}
+.fmt ul{list-style:none;padding:0;display:grid;gap:.45rem;color:var(--mute);margin-bottom:1.4rem}
+.fmt li::before{content:"\2713";color:var(--gold);margin-right:.6rem;font-weight:800}
+
+/* final cta */
+.final{text-align:center;background:radial-gradient(700px 300px at 50% 100%,rgba(255,200,61,.18),transparent 70%)}
+.final h2{margin:0 auto 1rem;max-width:20ch}
+.final p{margin:0 auto 2rem;max-width:44ch}
+.final .cta{justify-content:center}
+
+footer{border-top:1px solid var(--line);padding:2.5rem 0;font-size:.92rem}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem 2rem}
+footer nav{display:flex;gap:1.5rem;flex-wrap:wrap}
+footer p{color:var(--mute)}
+
+@media (max-width:980px){
+  .hero .wrap{grid-template-columns:1fr}
+  .films{grid-template-columns:repeat(2,1fr)}
+  .formats,.steps{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .nav ul{display:none}
+  .films{grid-template-columns:1fr 1fr;gap:.9rem}
+  .poster strong{font-size:1.2rem}
+  .row{gap:4px}
+  .hall{padding:1.2rem .8rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo" aria-label="Marquee home">Marquee</a>
+    <ul>
+      <li><a href="#showing">Now showing</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#formats">Formats</a></li>
+    </ul>
+    <a href="#showing" class="btn btn-gold">Book tickets</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Your film. Your seat. Booked in a minute.</h1>
+      <p class="lead">See every showtime near you, pick the exact seat you want, and pay once. Your tickets go straight to your phone.</p>
+      <div class="cta">
+        <a href="#showing" class="btn btn-gold">Find a showing</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+      <div class="facts">
+        <div><strong>600+</strong><span>Theatres</span></div>
+        <div><strong>45 sec</strong><span>Average booking</span></div>
+        <div><strong>Free</strong><span>Cancellation up to 2 hours before</span></div>
+      </div>
+    </div>
+
+    <div class="hall" role="group" aria-label="Try picking seats">
+      <div class="screen">Screen</div>
+<div class="row"><b>A</b><label><input type="checkbox" checked disabled aria-label="Seat A1"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat A2"><i></i></label><label><input type="checkbox" aria-label="Seat A3"><i></i></label><label><input type="checkbox" aria-label="Seat A4"><i></i></label><span class="aisle"></span><label><input type="checkbox" aria-label="Seat A5"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat A6"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat A7"><i></i></label><label><input type="checkbox" aria-label="Seat A8"><i></i></label></div>
+<div class="row"><b>B</b><label><input type="checkbox" aria-label="Seat B1"><i></i></label><label><input type="checkbox" aria-label="Seat B2"><i></i></label><label><input type="checkbox" aria-label="Seat B3"><i></i></label><label><input type="checkbox" aria-label="Seat B4"><i></i></label><span class="aisle"></span><label><input type="checkbox" aria-label="Seat B5"><i></i></label><label><input type="checkbox" aria-label="Seat B6"><i></i></label><label><input type="checkbox" aria-label="Seat B7"><i></i></label><label><input type="checkbox" aria-label="Seat B8"><i></i></label></div>
+<div class="row"><b>C</b><label><input type="checkbox" aria-label="Seat C1"><i></i></label><label><input type="checkbox" aria-label="Seat C2"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat C3"><i></i></label><label><input type="checkbox" aria-label="Seat C4"><i></i></label><span class="aisle"></span><label><input type="checkbox" aria-label="Seat C5"><i></i></label><label><input type="checkbox" aria-label="Seat C6"><i></i></label><label><input type="checkbox" aria-label="Seat C7"><i></i></label><label><input type="checkbox" aria-label="Seat C8"><i></i></label></div>
+<div class="row"><b>D</b><label><input type="checkbox" aria-label="Seat D1"><i></i></label><label><input type="checkbox" aria-label="Seat D2"><i></i></label><label><input type="checkbox" aria-label="Seat D3"><i></i></label><label><input type="checkbox" aria-label="Seat D4"><i></i></label><span class="aisle"></span><label><input type="checkbox" aria-label="Seat D5"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat D6"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat D7"><i></i></label><label><input type="checkbox" aria-label="Seat D8"><i></i></label></div>
+<div class="row"><b>E</b><label><input type="checkbox" aria-label="Seat E1"><i></i></label><label><input type="checkbox" checked disabled aria-label="Seat E2"><i></i></label><label><input type="checkbox" aria-label="Seat E3"><i></i></label><label><input type="checkbox" aria-label="Seat E4"><i></i></label><span class="aisle"></span><label><input type="checkbox" aria-label="Seat E5"><i></i></label><label><input type="checkbox" aria-label="Seat E6"><i></i></label><label><input type="checkbox" aria-label="Seat E7"><i></i></label><label><input type="checkbox" aria-label="Seat E8"><i></i></label></div>
+      <div class="legend">
+        <span>Open</span><span class="t">Yours</span><span class="b">Taken</span><span class="picked"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="showing">
+  <div class="wrap">
+    <div class="head">
+      <h2>Now showing near you</h2>
+      <p>Pick a time to go straight to the seat map.</p>
+    </div>
+    <div class="films">
+      <article class="film">
+        <div class="poster p1"><strong>Last Ember</strong><small>Thriller &bull; 2h 05m</small></div>
+        <h3>Last Ember</h3><p class="meta">Thriller &bull; UA</p>
+        <div class="times"><a href="#">4:30 PM</a><a href="#">7:15 PM</a><a href="#">10:00 PM</a></div>
+      </article>
+      <article class="film">
+        <div class="poster p2"><strong>Blue Meridian</strong><small>Sci-fi &bull; 2h 28m</small></div>
+        <h3>Blue Meridian</h3><p class="meta">Sci-fi &bull; U</p>
+        <div class="times"><a href="#">3:45 PM</a><a href="#">6:50 PM</a><a href="#">9:40 PM</a></div>
+      </article>
+      <article class="film">
+        <div class="poster p3"><strong>Rosewater</strong><small>Romance &bull; 1h 52m</small></div>
+        <h3>Rosewater</h3><p class="meta">Romance &bull; UA</p>
+        <div class="times"><a href="#">5:00 PM</a><a href="#">8:10 PM</a></div>
+      </article>
+      <article class="film">
+        <div class="poster p4"><strong>The Long Canopy</strong><small>Adventure &bull; 2h 15m</small></div>
+        <h3>The Long Canopy</h3><p class="meta">Adventure &bull; U</p>
+        <div class="times"><a href="#">2:30 PM</a><a href="#">5:40 PM</a><a href="#">8:30 PM</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="steps-band">
+  <div class="wrap">
+    <div class="head"><h2>From couch to cinema in three steps</h2></div>
+    <ol class="steps">
+      <li><h3>Choose a film and time</h3><p>Filter by theatre, language, or format. Showtimes update live.</p></li>
+      <li><h3>Pick your seats</h3><p>See the real seat map. Select the row you like and the seats stay held while you pay.</p></li>
+      <li><h3>Pay and go</h3><p>Pay with UPI, card, or wallet. Show the QR code at the door and walk in.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="formats">
+  <div class="wrap">
+    <div class="head">
+      <h2>Pick the screen that suits the film</h2>
+      <p>Prices shown are typical starting rates and vary by theatre and time.</p>
+    </div>
+    <div class="formats">
+      <div class="fmt">
+        <h3>Standard</h3>
+        <div class="price">&#8377;150 <small>from</small></div>
+        <ul><li>Comfortable fixed seating</li><li>Digital projection</li><li>Pre-book snacks</li></ul>
+        <a href="#showing" class="btn btn-ghost">Browse standard</a>
+      </div>
+      <div class="fmt hl">
+        <h3>IMAX &amp; large format</h3>
+        <div class="price">&#8377;380 <small>from</small></div>
+        <ul><li>Floor-to-ceiling screen</li><li>Immersive surround sound</li><li>Best-view seats highlighted</li></ul>
+        <a href="#showing" class="btn btn-gold">Browse IMAX</a>
+      </div>
+      <div class="fmt">
+        <h3>Recliner lounge</h3>
+        <div class="price">&#8377;550 <small>from</small></div>
+        <ul><li>Fully reclining seats</li><li>Food served to your seat</li><li>Fewer seats, more space</li></ul>
+        <a href="#showing" class="btn btn-ghost">Browse lounge</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>The best seat goes first. Grab it.</h2>
+    <p>Create a free account to save your favourite theatres and get tickets in one tap.</p>
+    <div class="cta">
+      <a href="#" class="btn btn-gold">Create free account</a>
+      <a href="#showing" class="btn btn-ghost">Browse showtimes</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a href="#" class="logo">Marquee</a><p>&copy; 2026 Marquee. All rights reserved.</p></div>
+    <nav aria-label="Footer"><a href="#">Help</a><a href="#">Gift cards</a><a href="#">Terms</a><a href="#">Privacy</a></nav>
+  </div>
+</footer>
+</body>
+</html>
